@@ -4,9 +4,27 @@ title: Voting
 script_srcs: ['/js/jquery-ui.min.js', '/js/hogan.min.js', '/js/sprintf.min.js', '/js/voting.js']
 ---
 <style type="text/css">
+  #members-list {
+    border: 1px inset #D4D4D4;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
+    float: right;
+    width: 200px;
+  }
+  #members-list div {
+    border-bottom: 1px solid #D4D4D4;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+    padding: 3px;
+  }
   .userlist {
     border-collapse: separate;
     border-spacing: 2px;
+  }
+  .userlist tbody {
+    min-height: 100px;
+  }
+  .userlist tr.instructions {
+    font-style: italic;
+    text-align: center;
   }
   td.center {
     text-align: center;
@@ -39,6 +57,8 @@ script_srcs: ['/js/jquery-ui.min.js', '/js/hogan.min.js', '/js/sprintf.min.js', 
 <input type="button" class="btn" id="rawballot" value="Get Raw Ballot" />
 
 <h3>Section 1: Staff Rankings</h3>
+<div id="members-list">
+</div>
 <table id="members" class="userlist">
   <thead>
     <tr>
@@ -52,6 +72,9 @@ script_srcs: ['/js/jquery-ui.min.js', '/js/hogan.min.js', '/js/sprintf.min.js', 
     </tr>
   </thead>
   <tbody>
+    <tr class="instructions">
+      <td colspan="7">Drag items from the list on the right into this space.</td>
+    </tr>
   </tbody>
 </table>
 

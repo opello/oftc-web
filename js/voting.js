@@ -65,17 +65,10 @@ $(document).ready(function() {
 
       $.each(staff['staff'], function(i, item)
       {
-        var newRow = $('<tr class="item">').appendTo('#members');
-
-        var col = $('<td class="index">').appendTo(newRow);
-        col.append(i + 1)
-        col = $('<td>').appendTo(newRow);
-        col.append('<i class="handle icon-resize-vertical">');
-        AddCol(newRow, { value: item['name'].trim() });
-        AddCol(newRow, { class: 'nick', value: item['nick'].trim() });
-        AddCol(newRow, { type: 'checkbox', name: 'sponsor', checked: item['sponsor'].trim() !== '' ? 'checked' : null, disabled: 'disabled' });
-        AddCol(newRow, { class: 'ombudsman', type: 'checkbox', name: 'ombudsman' });
-        AddCol(newRow, { class: 'remove', type: 'checkbox', name: 'remove' });
+        var member = $('<div class="member">').appendTo('#members-list');
+        member.text(item['name'].trim());
+        member.attr({ 'data-nick': item['nick'].trim() });
+        member.addClass('handle');
       });
     });
 
@@ -139,6 +132,11 @@ $(document).ready(function() {
     });
   };
 
+  $('#members-list').sortable(
+  {
+    connectWith: '#members tbody'
+  });
+
   $('#members tbody').sortable(
   {
     handle: '.handle',
@@ -153,7 +151,36 @@ $(document).ready(function() {
       });
       return helper;
     },
-    stop: updateIndex
+    stop: updateIndex,
+    receive: function(e, ui)
+    {
+      var newRow = $('<tr class="item">').insertAfter(ui.item);
+      var col = $('<td class="index">').appendTo(newRow);
+      var nick;
+      var user;
+      var checked;
+      nick = ui.item.attr('data-nick');
+      user = staffJSON['staff'][nick];
+
+      col.append(0)
+      col = $('<td>').appendTo(newRow);
+      col.append('<i class="handle icon-resize-vertical">');
+      AddCol(newRow, { value: user.name });
+      AddCol(newRow, { class: 'nick', value: user.nick });
+      checked = user.roles.sponsor === true ? 'checked' : null;
+      AddCol(newRow, { type: 'checkbox', name: 'sponsor', checked: checked, disabled: 'disabled' });
+      AddCol(newRow, { class: 'ombudsman', type: 'checkbox', name: 'ombudsman' });
+      AddCol(newRow, { class: 'remove', type: 'checkbox', name: 'remove' });
+
+      // Remove instructions if it exists.
+      $('tr.instructions', this).remove();
+      // Remove div.member.
+      ui.item.remove();
+      // Update ui object with the newly created tr.
+      ui.item = newRow;
+      // Manually update the ranks.
+      updateIndex(e, ui);
+    }
   });
 
   $('#rawballot').click(function()
